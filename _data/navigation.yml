@@ -1,0 +1,6 @@
+- name: Archive
+  link: /archive.html
+- name: About
+  link: /about.html
+- name: Impress
+  link: /impress.html
