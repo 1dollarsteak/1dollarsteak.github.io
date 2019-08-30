@@ -1,5 +1,5 @@
-- name: Archive
-  link: /archive.html
+- name: Blog
+  link: /blog.html
 - name: About
   link: /about.html
 - name: Impress

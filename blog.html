@@ -1,0 +1,26 @@
+---
+title: Blog
+---
+<ul>
+  {% for post in site.posts %}
+    <li>
+      <div id="post1" class="post-snippet">
+        <div>
+          <a href="{{ post.url }}" class="no-link-decoration">
+            <h3>
+              {{ post.title }}
+            </h3>
+          </a>
+        </div>
+        <div class="post-date">
+          10.05.19
+        </div>
+        <div class="post-text">
+          <a href="{{ post.url }}" class="no-link-decoration">
+            {{ post.excerpt }}
+          </a>
+        </div>
+      </div>
+    </li>
+  {% endfor %}
+</ul>
