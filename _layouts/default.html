@@ -7,6 +7,9 @@
   </head>
   <body>
     {% include navigation.html %}
-    {{ content }}
+    <div id="content">
+      {% include headline.html %}
+      {{ content }}
+    </div>
   </body>
 </html>
