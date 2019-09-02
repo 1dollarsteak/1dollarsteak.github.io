@@ -1,8 +1,10 @@
 #content {
   margin: 0 auto;
-  max-width: 50em;
-  font: 1.2em sans-serif;
+  padding: .6em;
+  max-width: 60em;
+  font-family: sans-serif;
   color: #444;
+  background-color: #fff;
 }
 
 #navbar {
@@ -18,6 +20,7 @@
 #headline {
   display: grid;
   grid-template-columns: 1fr;
+  justify-items: center;
 }
 
 #subtitle {
@@ -28,7 +31,11 @@
 }
 
 a, a:visited {
-  color: #f16663;
+  color: #c02f1d;
+}
+
+body {
+  background-color: #444;
 }
 
 hr {
@@ -37,11 +44,13 @@ hr {
 
 nav {
   margin: 0 auto;
+  padding: .6em;
   max-width: 60em;
   font-family: sans-serif;
   display: grid;
   grid-template-columns: 1fr 1fr 3fr;
   grid-column-gap: 10%;
+  background-color: #fff;
 }
 
 .emphasize {
