@@ -1,26 +1,27 @@
 ---
 title: Blog
 ---
+<h1>
+  Latest Posts
+</h1>
 <ul>
   {% for post in site.posts %}
-    <li>
-      <div id="post1" class="post-snippet">
+    <li class="no-list-style">
+      <div class="post">
         <div>
-          <a href="{{ post.url }}" class="no-link-decoration">
-            <h3>
+          <h2>
+            <a href="{{ post.url }}">
               {{ post.title }}
-            </h3>
-          </a>
+            </a>
+          </h2>
         </div>
         <div class="post-date">
-          10.05.19
-        </div>
-        <div class="post-text">
-          <a href="{{ post.url }}" class="no-link-decoration">
-            {{ post.excerpt }}
-          </a>
+          {{ post.date | date_to_string }}
         </div>
       </div>
+      <p>
+        {{ post.excerpt }}
+      </p>
     </li>
   {% endfor %}
 </ul>
