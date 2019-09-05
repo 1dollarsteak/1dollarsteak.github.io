@@ -1,9 +1,33 @@
+markdown: kramdown
+highlighter: rouge
+
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+  syntax_highlighter_opts:
+    css_class: 'highlight'
+    span:
+      line-numbers: false
+    block:
+      line-numbers: true
+      start_line: 1
+
+linenos: true
+highlight:
+  linenos: true
+
+highlight_options:
+  linenos: true
+
 defaults:
   - scope:
       path: ""
     values:
       layout: "default"
 
-plugins:
-  - jekyll-sitemap
-  - jekyll-seo-tag
+#plugins:
+  #- jekyll-sitemap
+  #- jekyll-seo-tag
+
+sass:
+  style: compact
