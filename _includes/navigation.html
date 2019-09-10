@@ -1,5 +1,13 @@
 <nav>
   {% for item in site.data.navigation %}
-  <a href="{{ item.link }}" {% if item.link == "/impress.html" %} id="impress" {% endif %} {% if page.url == item.link %}class="current"{% endif %}>{{ item.name }}</a>
+    {% unless item.name == "Impress" %}
+      <a href="{{ item.link }}">{{ item.name }}</a>
+    {% else %}
+      <div id="right-side-nav">
+        <a href="{{ item.link }}">{{ item.name }}</a>
+        <a href="{% if page.lang == 'de' %}{{ page.url | replace: '/de/', '/' }}{% else %}{{ page.url }}{% endif %}" class="no-link-decoration">{{ site.data.languages["en"].icon }}</a>
+        <a href="{% if page.lang != 'de' %}/de{% endif %}{{ page.url }}" class="no-link-decoration">{{ site.data.languages["de"].icon }}</a>
+      </div>
+    {% endunless %}
   {% endfor %}
 </nav>

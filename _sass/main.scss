@@ -7,10 +7,6 @@
   background-color: #fff;
 }
 
-#impress {
-  justify-self: end;
-}
-
 #headline {
   display: grid;
   grid-template-columns: 1fr;
@@ -22,6 +18,13 @@
   grid-template-columns: 1fr;
   justify-items: center;
   margin-bottom: 4em;
+}
+
+div#right-side-nav {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  grid-column-gap: 10%;
+  justify-self: end;
 }
 
 a, a:visited {

@@ -3,6 +3,13 @@ defaults:
       path: ""
     values:
       layout: "default"
+      lang: en
+      base-url: "/"
+  - scope:
+      path: de
+    values:
+      lang: de
+      base-url: "/de/"
 
 plugins:
   #- jekyll-sitemap

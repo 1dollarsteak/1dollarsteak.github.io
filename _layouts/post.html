@@ -1,6 +1,12 @@
 ---
 layout: default
 ---
+{% assign posts=site.posts | where:"i18n-link", page.i18n-link | sort: 'lang' %}
+
+{% if posts.size == 0 %}
+  {% assign posts=site.pages | where:"i18n-link", page.i18n-link | sort: 'lang' %}
+{% endif %}
+
 <div class="post">
   <div>
     <h1>
