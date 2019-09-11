@@ -1,13 +1,27 @@
 <nav>
-  {% for item in site.data.navigation %}
-    {% unless item.name == "Impress" %}
-      <a href="{{ item.link }}">{{ item.name }}</a>
-    {% else %}
-      <div id="right-side-nav">
+  {% if page.lang != "de" %}
+    {% for item in site.data.navigation_en %}
+      {% unless item.name == "Impress" %}
         <a href="{{ item.link }}">{{ item.name }}</a>
-        <a href="{% if page.lang == 'de' %}{{ page.url | replace: '/de/', '/' }}{% else %}{{ page.url }}{% endif %}" class="no-link-decoration">{{ site.data.languages["en"].icon }}</a>
-        <a href="{% if page.lang != 'de' %}/de{% endif %}{{ page.url }}" class="no-link-decoration">{{ site.data.languages["de"].icon }}</a>
-      </div>
-    {% endunless %}
-  {% endfor %}
+      {% else %}
+        <div id="right-side-nav">
+          <a href="{{ item.link }}">{{ item.name }}</a>
+          <a href="{% if page.lang == 'de' %}{{ page.url | replace: '/de/', '/' }}{% else %}{{ page.url }}{% endif %}" class="no-link-decoration">{{ site.data.languages["en"].icon }}</a>
+          <a href="{% if page.lang != 'de' %}/de{% endif %}{{ page.url }}" class="no-link-decoration">{{ site.data.languages["de"].icon }}</a>
+        </div>
+      {% endunless %}
+    {% endfor %}
+  {% else %}
+    {% for item in site.data.navigation_de %}
+      {% unless item.name == "Impressum" %}
+        <a href="{{ item.link }}">{{ item.name }}</a>
+      {% else %}
+        <div id="right-side-nav">
+          <a href="{{ item.link }}">{{ item.name }}</a>
+          <a href="{% if page.lang == 'de' %}{{ page.url | replace: '/de/', '/' }}{% else %}{{ page.url }}{% endif %}" class="no-link-decoration">{{ site.data.languages["en"].icon }}</a>
+          <a href="{% if page.lang != 'de' %}/de{% endif %}{{ page.url }}" class="no-link-decoration">{{ site.data.languages["de"].icon }}</a>
+        </div>
+      {% endunless %}
+    {% endfor %}
+  {% endif %}
 </nav>
