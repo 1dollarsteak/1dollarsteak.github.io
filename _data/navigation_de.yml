@@ -1,0 +1,6 @@
+- name: Blog
+  link: /de/blog.html
+- name: Über
+  link: /de/about.html
+- name: Impressum
+  link: /de/impress.html

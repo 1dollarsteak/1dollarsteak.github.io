@@ -16,25 +16,25 @@ As I'm not a native english speaker you might find errors in my text. You can e-
 </h1>
 <ul class="no-left-padding">
   {% assign posts = site.posts | where:"lang", page.lang %}
-    {% if posts.size > 0 %}
-      {% for post in posts limit:5 %}
-        <li class="no-list-style">
-          <div class="post">
-            <div>
-              <h2>
-                <a href="{{ post.url }}">
-                  {{ post.title }}
-                </a>
-              </h2>
-            </div>
-            <div class="post-date">
-              {{ post.date | date_to_string }}
-            </div>
+  {% if posts.size > 0 %}
+    {% for post in posts limit:5 %}
+      <li class="no-list-style">
+        <div class="post">
+          <div>
+            <h2>
+              <a href="{{ post.url }}">
+                {{ post.title }}
+              </a>
+            </h2>
           </div>
-          <p>
-            {{ post.excerpt }}
-          </p>
-        </li>
-      {% endfor %}
-    {% endif %}
+          <div class="post-date">
+            {{ post.date | date_to_string }}
+          </div>
+        </div>
+        <p>
+          {{ post.excerpt }}
+        </p>
+      </li>
+    {% endfor %}
+  {% endif %}
 </ul>
