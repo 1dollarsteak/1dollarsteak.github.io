@@ -6,8 +6,7 @@
       {% else %}
         <div id="right-side-nav">
           <a href="{{ item.link }}">{{ item.name }}</a>
-          <a href="{% if page.lang == 'de' %}{{ page.url | replace: '/de/', '/' }}{% else %}{{ page.url }}{% endif %}" class="no-link-decoration">{{ site.data.languages["en"].icon }}</a>
-          <a href="{% if page.lang != 'de' %}/de{% endif %}{{ page.url }}" class="no-link-decoration">{{ site.data.languages["de"].icon }}</a>
+          <a href="/de{{ page.url }}" class="no-link-decoration">{{ site.data.languages["de"].icon }}</a>
         </div>
       {% endunless %}
     {% endfor %}
@@ -18,8 +17,7 @@
       {% else %}
         <div id="right-side-nav">
           <a href="{{ item.link }}">{{ item.name }}</a>
-          <a href="{% if page.lang == 'de' %}{{ page.url | replace: '/de/', '/' }}{% else %}{{ page.url }}{% endif %}" class="no-link-decoration">{{ site.data.languages["en"].icon }}</a>
-          <a href="{% if page.lang != 'de' %}/de{% endif %}{{ page.url }}" class="no-link-decoration">{{ site.data.languages["de"].icon }}</a>
+          <a href="{{ page.url | replace: '/de/', '/' }}" class="no-link-decoration">{{ site.data.languages["en"].icon }}</a>
         </div>
       {% endunless %}
     {% endfor %}
