@@ -8,9 +8,14 @@
   </head>
   <body>
     {% include navigation.html %}
-    <div id="content">
+    <div class="content">
       {% include headline.html %}
       {{ content }}
+    </div>
+    <div class="content" id="footer">
+      <span id="copyright">
+        © 2019 <span title="no js, no cookies :)">Fabian Bißmann</span>
+      <span>
     </div>
   </body>
 </html>

@@ -1,12 +1,3 @@
-#content {
-  margin: 0 auto;
-  padding: .6em;
-  max-width: 60em;
-  font-family: sans-serif;
-  color: #444;
-  background-color: #fff;
-}
-
 #headline {
   display: grid;
   grid-template-columns: 1fr;
@@ -20,6 +11,12 @@
   margin-bottom: 4em;
 }
 
+#footer {
+  background-color: #222;
+  color: #555;
+  text-align: center;
+}
+
 div#right-side-nav {
   display: grid;
   grid-template-columns: 2fr 1fr;
@@ -27,15 +24,60 @@ div#right-side-nav {
   justify-self: end;
 }
 
+span#copyright {
+  font-size: .6em;
+}
+
+div.content {
+  margin: 0 auto;
+  padding: .6em;
+  max-width: 60em;
+  font-family: sans-serif;
+  color: #444;
+  background-color: #fff;
+}
+
+span.emphasize {
+  font-style: italic;
+}
+
+ul.no-left-padding {
+  padding-left: 0;
+}
+
+li.no-list-style {
+  list-style: none;
+}
+
+a.no-link-decoration {
+  text-decoration: none;
+  color: #444;
+}
+
+a.no-link-decoration:visited {
+  color: #444;
+}
+
+div.post {
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  grid-template-rows: repeat(1, 1fr);
+}
+
+div.post-date {
+  justify-self: end;
+  align-self: center;
+}
+
 a, a:visited {
   color: #c02f1d;
 }
 
 body {
-  background-color: #444;
+  background-color: #333;
   margin-top: 0;
   margin-bottom: 0;
-  background-image: url("data:image/svg+xml,%3Csvg width='6' height='6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='%23515151' d='M5 0h1L0 6V5zM6 5v1H5z'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg width='6' height='6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='%23555' d='M5 0h1L0 6V5zM6 5v1H5z'/%3E%3C/svg%3E");
 }
 
 hr {
@@ -51,38 +93,6 @@ nav {
   grid-template-columns: 1fr 3fr;
   grid-column-gap: 10%;
   background-color: #fff;
-}
-
-.emphasize {
-  font-style: italic;
-}
-
-.no-left-padding {
-  padding-left: 0;
-}
-
-.no-list-style {
-  list-style: none;
-}
-
-.no-link-decoration {
-  text-decoration: none;
-  color: #444;
-}
-
-.no-link-decoration:visited {
-  color: #444;
-}
-
-.post {
-  display: grid;
-  grid-template-columns: 3fr 1fr;
-  grid-template-rows: repeat(1, 1fr);
-}
-
-.post-date {
-  justify-self: end;
-  align-self: center;
 }
 
 @media only screen and (max-width: 599px) {
