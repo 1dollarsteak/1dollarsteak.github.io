@@ -11,9 +11,11 @@ defaults:
       lang: de
       base-url: "/de/"
 
+url: "https://fabianbissmann.de"
+
 plugins:
-  #- jekyll-sitemap
-  #- jekyll-seo-tag
+  - jekyll-sitemap
+  - jekyll-seo-tag
   - jemoji
 
 markdown: kramdown
@@ -32,3 +34,7 @@ kramdown:
 
 sass:
   style: compact
+
+title: "Fabian Bißmann"
+description: "A journal focusing on IT specific topics."
+url: "fabianbissmann.de"
