@@ -1,17 +1,5 @@
 <nav>
-  {% if page.lang != "de" %}
-    {% for item in site.data.navigation_en %}
-      <a href="{{ item.link }}">{{ item.name }}</a>
-      <div id="right-side-nav">
-        <a href="/de{{ page.url }}" class="no-link-decoration">{{ site.data.languages["de"].icon }}</a>
-      </div>
-    {% endfor %}
-  {% else %}
-    {% for item in site.data.navigation_de %}
-      <a href="{{ item.link }}">{{ item.name }}</a>
-      <div id="right-side-nav">
-        <a href="{{ page.url | replace: '/de/', '/' }}" class="no-link-decoration">{{ site.data.languages["en"].icon }}</a>
-      </div>
-    {% endfor %}
-  {% endif %}
+  {% for item in site.data.navigation %}
+    <a href="{{ item.link }}">{{ item.name }}</a>
+  {% endfor %}
 </nav>
