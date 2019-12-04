@@ -1,4 +1,6 @@
-- name: Impress
-  link: /impress.html
+- name: Impressum
+  link: /impressum.html
 - name: Sitemap
   link: /sitemap.html
+- name: Privacy
+  link: /privacy.html

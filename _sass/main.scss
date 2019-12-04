@@ -8,7 +8,7 @@
   display: grid;
   grid-template-columns: 1fr;
   justify-items: center;
-  margin-bottom: 4em;
+  margin-bottom: 3em;
 }
 
 #footer {
@@ -22,7 +22,7 @@
   grid-column-gap: 10%;
   grid-template-areas:
     "links links links"
-    ". author .";
+    "author author author";
 }
 
 span#copyright {
