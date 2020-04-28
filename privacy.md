@@ -5,7 +5,7 @@ lang: en
 ---
 In the following sections the privacy policies of this website are described. 
 The term _you_ stands for you as in the visitor of this website and _I_ stands 
-for me as the sole person who is in chare of this website and its content.
+for me as the sole person who is in care of this website and its content.
 
 ## Collected information
 - I don't collect any information about you
