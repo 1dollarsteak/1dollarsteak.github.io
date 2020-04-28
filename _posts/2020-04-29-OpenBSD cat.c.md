@@ -1,8 +1,8 @@
 ---
 layout: post
-title: OpenBSD - 1 file a day (cat.c)
-categories: [1fad]
-tags: [programming]
+title: OpenBSD - cat.c
+categories: [explanation]
+tags: [programming, c, flowchart]
 description: A thorough explanation of the OpenBSD version of the cat.c program
 lang: en
 ---
@@ -15,8 +15,7 @@ highly doubt it's possible to satisfy the given interval at reading and
 understanding. Nevertheless, I want to share my discoveries with you and
 show you some (not all, hopefully) files I deemed as interesting and
 worthy to describe in depth. So I thought why don't give this a little
-motivation bump and write about it in my blog. The given title 1fad stands for
-1 file a day.
+motivational bump and write about it in my blog.
 
 
 To begin with I want to focus my view on cat.c.
@@ -151,7 +150,7 @@ understanding the source code of cat.c.
 This header file defines several functions to work with files in different
 modes (read only, write, ...). The `int open(const char *, int, ...);` function
 is used in cat.c to check if a file, that was passed as an argument, can be
-opened for reading.
+opened for reading (and open it afterwards).
 ```c
 else if ((fd = open(*argv, 0_RDONLY, 0)) == -1) {
   warn("%s", *argv);
@@ -276,10 +275,168 @@ you can search the next valid option character from the command line
 argument list (*argv). The last argument specifies a list of available
 arguments. In the following section I'll explain how this check is
 implemented.
-## Up next
-As this post got a little bit longer than I thought, I'll split this up in two
-parts. The next part will cover the description of functions with the help of
-flow charts to get a better overview of the code as a whole. As I've only a
-small amount of time to spare for writing, this first post got exactly a month
-old, before I was able to publish it. I'll append the link to part 2 when it's
-ready.
+## Functions
+Overall there a five functions in cat.c. In this chapter I'll describe the
+content of each with the help of a diagram with standard flowchart like symbols.
+### int main(...)
+As the main function and the starting point, this function checks the passed
+parameters to cat and sets additional flags accordingly. A function is run
+depending on if options were passed or not.
+
+![main flowchart](/assets/svg/cat_main.svg#center)
+
+The first thing to note after the start node is the usage of 
+[pledge](https://man.openbsd.org/pledge.2). Pledge gives the possibility to
+restrict the permissions of the program to access system operations. After
+pledge was successfully ran, main enters a loop in wich every passed option is
+checked. Appropriate flags are set to identify the options later while the loop
+is processed. The argv string is afterwards added with the number of options
+(optind). This is done to handle passed files (behind the options) afterwards
+more easily. If any flag is set, cook_args is run or else raw_args. In the end
+the standard out is closed and if all went ok with no errors, rval is returned
+and cat exits.
+### void cook_args(...)
+As noted in the description of the main function, if any flags were set when cat
+was run, this function is called. In general cook_args opens every passed file
+(including stdin -) and runs cook_buf on it. Also a bit of error checking is
+done in this function. Let's get into some detail.
+
+![cook_args flowchart](/assets/svg/cat_cook_args.svg#center)
+
+After the assignment of stdin to the filepointer variable and the string "stdin"
+to the filename variable cook_args enters a loop. I'd like to add here a small
+comment about choices regarding the design of the flow chart. You may notice 
+that there are two identical decision objects in this chart. It's where 
+*argv != 0 is checked. I've added one at the start and one at the end because 
+the source code just acts the same way. A small excerpt to visualize:
+```c
+//...
+do {
+  if (*argv) {
+    if (!strcmp(*argv, "-"))
+      fp = stdin;
+    else if ((fp = fopen(*argv, "r")) == NULL) {
+      warn("%s", *argv);
+      rval = 1;
+      ++argv;
+      continue;
+    }
+    filename = *argv++;
+  }
+  //...
+} while (*argv);
+//...
+```
+Have a look at line three and 15. There you can see that the check is performed
+twice. This is what I have tried to depict in my flow chart. You can see here,
+that if cat is run with no "file" arguments passed (that means no arguments
+after the options) it passes stdin as the fp to cook_buf. If it contains any
+file arguments, the first check is if it contains "-" and if yes it sets the fp
+to stdin.
+### void raw_args(...)
+This function is very similar to cook_args, described earlier. But because there
+are no flags set (checked inside main), the function doesn't need to utilize a
+file pointer like his "sibling". cook_args would create a file pointer (fp) and
+point it to stdin or any passed file to then forward it to cook_buf. This is
+because cook_buf needs access to higher level functions to fulfil the actions
+requested by the flags.
+
+![raw_args flowchart](/assets/svg/cat_raw_args.svg#center)
+
+As mentioned above no flags have to be checked. This function forgoes the use of
+fopen to open passed files to read the content of and just uses the function
+open on it. The main difference is that with fopen you get a FILE * object to
+work on. It also comes with a buffering I/O and paves the way for different 
+stdio functions (more on that in section cook_buf).
+### void raw_cat(int rfd)
+raw_cat is responsible for putting out content passed to cat without any
+parameter. The function can be divided in 3 parts.
+- Allocate memory for the buffer
+- Read file (or stdin) for a earlier set up number of bytes
+- Write content to stdout
+
+![raw_cat flowchart](/assets/svg/cat_raw_cat.svg#center)
+
+At first raw_cat defines variables for accessing stdout and storing information
+about it. This information is then used to define a fixed buffer size and later
+also determine the number of bytes to read from the file descriptor that was
+passed as a parameter to the function. The allocation of the buffer consists of
+a single if clause and is accompanied by two error checks. After that the
+function enters a rather simple read-file-print-file loop construct. To focus a
+bit on how simple the loops are constructed, I have added the relevant snippet
+below:
+```c
+while ((nr = read(rfd, buf, bsize)) != -1 && nr != 0)
+  for (off = 0; nr; nr -= nw, off += nw)
+    if ((nw = write(wfd, buf + off, (size_t)nr)) == 0 || nw == -1)
+      err(1, "stdout");
+```
+As every action takes place inside the loops, no space is wasted. Just to take
+a better shot at explaining it, I've allowed myself to expand this piece of code
+a bit:
+```c
+nr = read(rfd, buf, bsize);
+while (nr != -1 && nr != 0) {
+  for (off = 0; nr; nr -= nw, off += nw) {
+    nw = write(wfd, buf + off, (size_t)nr);
+    if (nw == 0 || nw == -1) {
+      err(1, "stdout");
+    }
+  }
+  nr = read(rfd, buf, bsize);
+}
+```
+First nr is set with bsize bytes out of the file that rfd links to. If
+everything went well, the while loop is entered. The for loop is now responsible
+to write from the buffer to the stdout stream. The variable off is used to
+specify an offset for what was already printed to stdout. For every run inside 
+the for loop, nr is reduced by the size of nw (already printed bytes). If nr
+reaches 0 the next bytes is transfered in the buffer. This goes on until EOF is
+reached. After that the program exits.
+
+### void cook_buf(FILE *fp)
+I've decided to place cook_buf at the end, because of it's size and because it's
+the most complex function inside cat. The function is responsible for every
+behavior that can be controlled with flags. To summarize (in short, for full
+description see: [cat(1)](https://man.openbsd.org/cat.1)) this covers:
+1. -b: Number the lines, but don't count blank lines.
+2. -e: Print a dollar sign (‘$’) at the end of each line.
+3. -n: Number the output lines, starting at 1.
+4. -s: Squeeze multiple adjacent empty lines.
+5. -t: Print tab characters as ‘^I’.
+6. -u: The output is guaranteed to be unbuffered.
+7. -v: Displays non-printing characters so they are visible.
+
+![cook_buf flowchart](/assets/svg/cat_cook_buf.svg#center)
+
+To start the explaining of this function, at first a loop is entered
+(at ch = getc(fp)), where ch is the next character from the passed stream
+argument fp. It's then checked if it contains EOL. If yes it goes directly down
+to ferror(fp) and the function (and (almost) cat itself) exits. If the previous
+character was a newline, then #4 in the above list (Squeeze multiple adjacent
+empty lines) is checked. If it's set and ch is also a newline char, then the
+output of it is bypassed and the loop starts with reading in the next character.
+
+Is the n flag set (number the output lines), then it's checked if there is also
+the b flag set (don't count blank lines) and then if the e flag is not set
+(print a $ sign at the end of each line). The outcome is then depending on the
+case of flags set. Bear in mind that if the n flag is set, there is also the
+occurrence of the e flag (dollar at end of line) checked. If it's set, then
+there is a tab after the line number (if the line is empty and counted). The
+further checks for e, t and v are alike implemented. Inside the check for the
+vflag, when the character is a control character, it's binary code is run
+against the binary or of 0100. This is just a commonly used technique to map
+control characters to their suitable printable character.
+
+After all the checks and action because of the flags the character is outputted
+on the stream inside the if clause (putchar(ch) == EOF). If this worked then
+the loop starts again. If not, the fp parameter is checked for errors with
+ferror(fp).
+
+### Bottom line
+I know that the last flowchart is a bit confusing and overwhelming. But as I am
+constantly improving my skills creating representive charts I'm confident, that
+it'll get better over time. As the thorough explanation of cat is just the start
+of a nice little side project, I'm eager awaiting the next challenges. Also to
+be honest, this post took me a bit too long. Starting in December until the end
+of April. I hope I can reduce this number in the next posts.
