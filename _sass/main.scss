@@ -96,6 +96,11 @@ hr {
   color: #fff;
 }
 
+img[src*='#center'] { 
+  display: block;
+  margin: auto;
+}
+
 pre {
   white-space: pre-wrap;
 }
