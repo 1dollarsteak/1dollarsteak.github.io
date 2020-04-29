@@ -101,6 +101,13 @@ img[src*='#center'] {
   margin: auto;
 }
 
+@media (max-width: 899px) {
+  img[src*='#center'] {
+    height: auto;
+    width: 100%;
+  }
+}
+
 pre {
   white-space: pre-wrap;
 }
