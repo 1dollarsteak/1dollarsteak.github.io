@@ -397,8 +397,8 @@ reached. After that the program exits.
 ### void cook_buf(FILE *fp)
 I've decided to place cook_buf at the end, because of it's size and because it's
 the most complex function inside cat. The function is responsible for every
-behavior that can be controlled with flags. To summarize (in short, for full
-description see: [cat(1)](https://man.openbsd.org/cat.1)) this covers:
+behavior that can be controlled with flags. To summarize (in short, for the full
+description see: [cat(1)](https://man.openbsd.org/cat.1)), this covers:
 1. -b: Number the lines, but don't count blank lines.
 2. -e: Print a dollar sign (‘$’) at the end of each line.
 3. -n: Number the output lines, starting at 1.
@@ -409,33 +409,32 @@ description see: [cat(1)](https://man.openbsd.org/cat.1)) this covers:
 
 ![cook_buf flowchart](/assets/svg/cat_cook_buf.svg#center)
 
-To start the explaining of this function, at first a loop is entered
+To start the explanation of this function: A loop is entered at first
 (at ch = getc(fp)), where ch is the next character from the passed stream
 argument fp. It's then checked if it contains EOL. If yes it goes directly down
 to ferror(fp) and the function (and (almost) cat itself) exits. If the previous
-character was a newline, then #4 in the above list (Squeeze multiple adjacent
-empty lines) is checked. If it's set and ch is also a newline char, then the
+character was a newline, then #4 in the above list (_Squeeze multiple adjacent
+empty lines_) is checked. If it's set and ch is also a newline char, then the
 output of it is bypassed and the loop starts with reading in the next character.
 
-Is the n flag set (number the output lines), then it's checked if there is also
-the b flag set (don't count blank lines) and then if the e flag is not set
-(print a $ sign at the end of each line). The outcome is then depending on the
-case of flags set. Bear in mind that if the n flag is set, there is also the
-occurrence of the e flag (dollar at end of line) checked. If it's set, then
+Is the n flag set (_Number the output lines_), then it's checked if there is
+also the b flag set (_don't count blank lines_) and then if the e flag is not
+set (_print a $ sign at the end of each line_). The outcome is then depending on
+the case of flags set. Bear in mind that if the n flag is set, there is also the
+occurrence of the e flag (_dollar at end of line_) checked. If it's set, then
 there is a tab after the line number (if the line is empty and counted). The
 further checks for e, t and v are alike implemented. Inside the check for the
 vflag, when the character is a control character, it's binary code is run
-against the binary or of 0100. This is just a commonly used technique to map
+against the binary or of _0100_. This is just a commonly used technique to map
 control characters to their suitable printable character.
 
-After all the checks and action because of the flags the character is outputted
-on the stream inside the if clause (putchar(ch) == EOF). If this worked then
-the loop starts again. If not, the fp parameter is checked for errors with
-ferror(fp).
+After all these checks the character is outputted on the stream inside the if
+clause (putchar(ch) == EOF). If this worked then the loop starts again. If not,
+the fp parameter is checked for errors with ferror(fp).
 
 ### Bottom line
 I know that the last flowchart is a bit confusing and overwhelming. But as I am
-constantly improving my skills creating representive charts I'm confident, that
+constantly improving my skills creating representive charts, I'm confident that
 it'll get better over time. As the thorough explanation of cat is just the start
 of a nice little side project, I'm eager awaiting the next challenges. Also to
 be honest, this post took me a bit too long. Starting in December until the end
