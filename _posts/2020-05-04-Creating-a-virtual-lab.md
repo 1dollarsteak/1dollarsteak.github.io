@@ -51,7 +51,23 @@ upgrade and double the size (see below).
 
 ## Vm plan
 
-| Step | Hostname | RAM (GB) | Disk (GB) | CPU (Cores) |
-| ---- | -------- | -------- | --------- | ----------- |
-| 1    | labsm1   | 2        | 50        | 1           |
-
+| Step | Hostname | RAM (GB) | Disk (GB) | CPU (Cores) | Use |
+| ---- | -------- | -------- | --------- | ----------- | ----------------- |
+| 1    | labsmt1  | 2        | 50        | 1           | Spacewalk         |
+| 2    | labdns1  | 1        | 20        | 1           | named & dhcpd     |
+| 3    | labldp1  | 1        | 20        | 1           | LDAP 1            |
+| 4    | labldp2  | 1        | 20        | 1           | LDAP 2            |
+| 5    | labsql1  | 2        | 20        | 1           | PostgreSQL 1      |
+| 6    | labsql2  | 2        | 20        | 1           | PostgreSQL 2      |
+| 7    | labcfg1  | 1        | 20        | 1           | Puppet            |
+| 8    | labstg1  | 1        | 20        | 1           | iscsitgt & nfs    |
+| 9    | labbkp1  | 1        | 20        | 1           | bakula Backup     |
+| 10   | labweb1  | 1        | 20        | 1           | Apache httpd 1    |
+| 11   | labweb2  | 1        | 20        | 1           | Apache httpd 2    |
+| 12   | labwac1  | 1        | 20        | 1           | Apache Tomcat 1   |
+| 13   | labwac2  | 1        | 20        | 1           | Apache Tomcat 2   |
+| 14   | labldb1  | 1        | 20        | 1           | iptables          |
+| 15   | labeml1  | 2        | 20        | 1           | postfix           |
+| 16   | labmon1  | 1        | 20        | 1           | Nagios core       |
+| 17   | lablog1  | 4        | 20        | 1           | ELK stack         |
+| **&#8721;** | **-** | **24** | **430** | **17**      | **-**             |
