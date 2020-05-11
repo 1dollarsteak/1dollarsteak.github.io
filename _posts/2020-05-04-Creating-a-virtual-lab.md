@@ -2,7 +2,7 @@
 layout: post
 title: Creating a virtual lab
 categories: [showcase]
-tags: [virtualisation, linux]
+tags: [virtualisation, linux, vlab]
 description: An initial showcase of setting up a small virtual lab
 lang: en
 ---
@@ -50,6 +50,11 @@ with this capacity. After operation isn't possible anymore I'll perform an
 upgrade and double the size (see below).
 
 ## Vm plan
+In the following table, I've written down a roughly calculated usage of my
+available hardware. If everything is operable at the given RAM size then I'll
+end up with 8 GB of memory available for the host or as a buffer.
+The disk sizes should be sufficient, as I don't see any big data in the used
+software.
 
 | Step | Hostname | RAM (GB) | Disk (GB) | CPU (Cores) | Use |
 | ---- | -------- | -------- | --------- | ----------- | ----------------- |
@@ -71,3 +76,22 @@ upgrade and double the size (see below).
 | 16   | labmon1  | 1        | 20        | 1           | Nagios core       |
 | 17   | lablog1  | 4        | 20        | 1           | ELK stack         |
 | **&#8721;** | **-** | **24** | **430** | **17**      | **-**             |
+
+In sum there are 17 active vms in my virtual lab when the end of this project is
+reached. Step 5 and 6 is primarily used for inhabiting the database of vm #1.
+Vm 10-13 is for hosting a wiki server and maybe more. Preferably the wiki 
+[Confluence](https://www.atlassian.com/software/confluence) from Attlassian will
+be used. Caching and loadbalancing is done with
+[Infinispan](https://infinispan.org/). The postfix server is set up to receive
+mails from every server inside the lab network. This is set up due to monitoring
+reasons. Also the monitoring section is extended with #16 and #17. Where
+[Nagios](https://www.nagios.com/products/nagios-core/) takes in place as the
+monitoring server and the
+[Elasticsearch stack](https://www.elastic.co/de/elastic-stack)
+is responsible as a log server and data visualizer in the first place.
+
+## Up next
+The preparations for the first vm have already been started. Right now the
+hypvervisor is all set up and I'll begin shortly with setting up Spacewalk. The
+next post also serves as a template for the structure of the future posts of
+this project.
