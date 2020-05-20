@@ -99,12 +99,14 @@ hr {
 img[src*='#center'] { 
   display: block;
   margin: auto;
+  max-width: 80%;
 }
 
 @media (max-width: 899px) {
   img[src*='#center'] {
     height: auto;
     width: 100%;
+    max-width: 100%;
   }
 }
 
