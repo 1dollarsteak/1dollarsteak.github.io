@@ -103,7 +103,7 @@ I then proceeded to configure automatic errata importation, with the help of a
 [common perl script](https://cefs.steve-meier.de/). The automation was done by
 creating a
 [daily cronjob script](http://www.stankowic-development.net/?p=8661&lang=en).
-At this moment I encountered fault #2. The script wasn't able to connect the
+At this moment I encountered fault #3. The script wasn't able to connect the
 errata information with neither any channels nor packages. So I needed to set
 them up too. This was a rather straightforward task (when done over the web
 ui). The following channels were created (with fitting repositories linked to
@@ -114,14 +114,65 @@ each of them):
 - epel-el7-x86\_64
 
 After all packages were downloaded, an errata test importation was also
-successfully:
+successfull:
 
 ![Spacewalk errata](/assets/img/posts/vl1/spacewalk_errata.png#center)
 
 ## Problems
-- 20 GB but need 50 GB
-- CentOS 8 but can't really install it (no manual found)
-- no errata imported
+### CentOS 8 installation was not possible
+In the beginning I wanted to start with a somewhat newer version of CentOS than
+6 or 7. I decided to go with version 8. As I've never got in touch with CentOS
+before, I was not expecting that you can't just use a manual that was written
+for CentOS 7. The manual im reffering to is the Spacewalk installation guide. I
+quickly abandonded my plan to use CentOS 8 and went with 7.
+
+Time spend: 4 hours.
+
+### The initial disk size was too small
+I didn't pay enough attention, that the disk size in the act of creating the
+virtual machine was not 50 GB as it was planned. Instead I've created a disk
+with a size of 20 GB.
+
+So I had to read about how to resize disks with QEMU. I've resized many disks
+with various formats for many different hypervisors and operating systems. So,
+I was confident that it was not a big deal. To summarize, these are the steps
+I've taken:
+1. Stopped the VM
+2. Ran `qemu-img resize <disk> +30G`
+3. Started the VM
+4. Backed up the current partition table
+5. Recreated the partition with the new end of the disk
+6. Rebooted the VM
+7. Checked the state with lsblk
+8. Resized the LVM PV with pvresize
+9. Resized the LVM LV with lvextend
+10. Resized the filesystem with xfs\_growfs
+
+After these steps I've checked everything twice and moved on to download the
+additional packages from the mirrors.
+
+Sources that helped me:
+- <https://serverfault.com/questions/324281/how-do-you-increase-a-kvm-guests-disk-space#324314>
+- <https://www.rootusers.com/lvm-resize-how-to-increase-an-lvm-partition/>
+- <https://serverfault.com/questions/861517/centos-7-extend-partition-with-unallocated-space>
+
+Time spend: 2 hours
+
+### No errata was imported
+A rather small error, that I was able to solve quickly. At the start of the
+configuration I was eager to import every errata information that I could get
+a hold on. It turned out that without any downloaded packages, it's not possible
+to download and catalog errata information. Also it was a misleading error
+message that quite not described the cause. Only something in general.
+
+Time spend: 30 minutes
 
 ## Lessons learned
-- Need to read more attentive.
+I think on the bottom line I should read more attentively, because these errors
+may never occurred, when I've strictly followed the guideline. On the other side
+I am graceful that I ran into these things. So to sum up:
+- KVM / QEMU basic operation
+- CentOS 7 basic installation
+- Spacewalk basic installation and configuration
+- Spacewalk errata management on CentOS 7
+- Basic QEMU / CentOS 7 / LVM disk resizing
