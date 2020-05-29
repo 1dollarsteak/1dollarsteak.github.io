@@ -4,6 +4,7 @@ title: Creating a virtual lab
 categories: [showcase]
 tags: [virtualisation, linux, vlab]
 description: An initial showcase of setting up a small virtual lab
+date: 2020-05-04
 lang: en
 ---
 

@@ -4,6 +4,7 @@ title: vLab 1 - Spacewalk
 categories: [showcase]
 tags: [virtualisation, linux, vlab, spacewalk, kvm]
 description: Setting up a spacewalk server in CentOS 7
+date: 2020-05-26
 lang: en
 ---
 The first two steps of creating a virtual lab are:

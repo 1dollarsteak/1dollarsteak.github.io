@@ -17,6 +17,7 @@ plugins:
   - jekyll-sitemap
   - jekyll-seo-tag
   - jemoji
+  - jekyll-feed
 
 markdown: kramdown
 
@@ -38,3 +39,4 @@ sass:
 title: "Fabian Bißmann"
 description: "A journal focusing on IT specific topics."
 url: "fabianbissmann.de"
+author: "Fabian Bißmann"

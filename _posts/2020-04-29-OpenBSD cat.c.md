@@ -4,6 +4,7 @@ title: OpenBSD - cat.c
 categories: [explanation]
 tags: [programming, c, flowchart]
 description: A thorough explanation of the OpenBSD version of the cat.c program
+date: 2020-04-29
 lang: en
 ---
 
