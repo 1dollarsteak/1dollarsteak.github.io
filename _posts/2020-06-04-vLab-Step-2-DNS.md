@@ -98,11 +98,26 @@ network. The next question arrised after realising that the Spacewalk server
 also serves as a configuration server. This could mean that labcfg1 is no longer
 needed. I'll postpone that decision.
 
-The DNS plan is integrated in the upper table.
-## Implementation
-Short intro to system bla bla same as before
+The DNS plan for the hosts is integrated in the upper table. As my zone I've
+chosen to create a subdomain of my actual domain: lab.fabianbissmann.de. Despite
+the duplicate information (lab) and the longer text in a FQDN, I think it's the
+solution with the most advantages.
+- I am the owner of my internal domain (I wouldn't if I chose any fantasy
+domain)
+- I can use officially signed certificates on services
 
-Installation of DNS Server and config
+## Implementation
+The system is going to be CentOS 7 as before. I'll not go into detail as in the
+last post, because I think the installation process should be clear. Despite
+that, here is where I encountered my first issue (more on that in the section
+Problems).
+
+Despite that I already have installed DNS and DHCP servers I conducted several
+manuals in hope of learning something new and to decrease the possibility to
+create issues I'll notice later on.
+These are the links to the manuals:
+- [a](www.google.de)
+- [b](www.google.de)
 
 Installation of DHCP Server
 -> Disabling of QEMU-supplied DHCP-Server
