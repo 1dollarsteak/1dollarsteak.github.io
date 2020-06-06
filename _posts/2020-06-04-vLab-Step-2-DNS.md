@@ -10,7 +10,7 @@ lang: en
 To be honest I thought that this task was a rather simple one. I was wrong.
 The initial task was to set up a single server that offers dns and dhcp. As I
 guessed right, this was (because of the size of my virtual lab) the easy part.
-The next step was to add the pxeboot feature to labsmt1 (Spacewalk) and to
+The next step was to add the PXE feature to labsmt1 (Spacewalk) and to
 advertise it via dhcp.
 
 ## Overview
@@ -108,26 +108,99 @@ domain)
 
 ## Implementation
 The system is going to be CentOS 7 as before. I'll not go into detail as in the
-last post, because I think the installation process should be clear. Despite
-that, here is where I encountered my first issue (more on that in the section
+last post, because I think the installation process should be clear. Apart from
+that, this is where I encountered my first issue (more on that in the section
 Problems).
 
-Despite that I already have installed DNS and DHCP servers I conducted several
-manuals in hope of learning something new and to decrease the possibility to
-create issues I'll notice later on.
+Despite that I already have installed DNS and DHCP servers in the past I
+conducted several manuals in hope of learning something new and to decrease the
+possibility to create issues I'll stumble upon in the later process.
 These are the links to the manuals:
-- [a](www.google.de)
-- [b](www.google.de)
+- [DNS Server](www.google.de)
+- [DHCP Server](www.google.de)
 
-Installation of DHCP Server
--> Disabling of QEMU-supplied DHCP-Server
+The software was installed by using yum. This is the named configuration:
+```bash
+#/etc/named.conf
+zone "." IN {
+        type hint;
+        file "/var/named/named.ca";
+};
 
-Show off some results
+zone "lab.fabianbissmann.de" IN {
+        type master;
+        file "/var/named/lab.fabianbissmann.de.db";
+        allow-update { none; };
+};
 
-Now time to enable the Spacewalk server as a target for pxe boot.
+zone "122.168.192.in-addr.arpa" IN {
+        type master;
+        file "/var/named/192.168.122.db";
+        allow-update { none; };
+};
+
+```
+After setting up the zones I had to create the zone files, with all entrys of
+the above table (that I planned). There is nothing of much interest. Just to
+give you an idea of it:
+```bash
+/var/named/lab.fabianbissmann.de.db
+@ IN SOA labdns1.lab.fabianbissmann.de. hostmaster.lab.fabianbissmann.de. (
+        2020053001 ; serial
+        3600       ; refresh
+        1800       ; retry
+        604800     ; expire
+        600 )      ; negative caching
+
+; Name server information
+@ IN NS labdns1.lab.fabianbissmann.de.
+
+; IP address of name server
+labdns1 IN A 192.168.122.10
+...
+```
+One thing worth to mention, is that I numbered the serial according to the date
+of creation (plus 2 digits for changes). Every change this number needs to get
+bigger. To make it easier to guess, when the last change to the dns was, I've
+chosen to make the serial look like a timestamp.
+
+The configuration for the DHCP server looks like this:
+```bash
+#/etc/dhcp/dhcpd.conf
+option domain-name "lab.fabianbissmann.de";
+option domain-name-servers labdns1.lab.fabianbissmann.de;
+
+default-lease-time 600;
+max-lease-time 7200;
+
+authoritative;
+subnet 192.168.122.0 netmask 255.255.255.0 {
+        range 192.168.122.100 192.168.122.199;
+        option routers 192.168.122.1;
+        option broadcast-address 192.168.122.255;
+        next-server 192.168.122.20;
+        filename "/pxelinux.0";
+}
+```
+Also, nothing special here. The next-server is the PXE server (it's the
+Spacewalk server). It's advised to disable the QEMU-internal dhcp server (if
+started before). For this to achieve, I had to edit the network configuration
+of the virtual network via the virsh application and delete the dhcp part.
+
+Now time to enable the Spacewalk server as a target for PXE.
 errors and errors later...
+The last step was to enable the Spacewalk server as a target for the PXE
+feature. For it to set up, I had to download a CentOS ISO and mount it inside
+the labsmt1 server. After that, I should be able to configure a distribution,
+with the mounted ISO as a path to the boot image inside. It turned out that:
+1. ISO files (loop devices) get mounted read only
+2. SELinux doesn't allow Spacewalk to read or access it.
 
-And then short showing off of the finished spacewalk server
+More on that in the problems section. After I overcame these *features*,
+Spacewalk was able to access the files in the mounted iso and the distribution
+was successfully set up.
+
+**Image of the created distribution**
 
 ## Problems
 ### More RAM when installing
