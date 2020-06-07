@@ -127,7 +127,7 @@ before, I was not expecting that you can't just use a manual that was written
 for CentOS 7. The manual im reffering to is the Spacewalk installation guide. I
 quickly abandonded my plan to use CentOS 8 and went with 7.
 
-Time spend: 4 hours.
+Time spent: 4 hours.
 
 ### The initial disk size was too small
 I didn't pay enough attention, that the disk size in the act of creating the
@@ -157,7 +157,7 @@ Sources that helped me:
 - <https://www.rootusers.com/lvm-resize-how-to-increase-an-lvm-partition/>
 - <https://serverfault.com/questions/861517/centos-7-extend-partition-with-unallocated-space>
 
-Time spend: 2 hours
+Time spent: 2 hours
 
 ### No errata was imported
 A rather small error, that I was able to solve quickly. At the start of the
@@ -166,7 +166,7 @@ a hold on. It turned out that without any downloaded packages, it's not possible
 to download and catalog errata information. Also it was a misleading error
 message that quite not described the cause. Only something in general.
 
-Time spend: 30 minutes
+Time spent: 30 minutes
 
 ## Lessons learned
 I think on the bottom line I should read more attentively, because these errors
