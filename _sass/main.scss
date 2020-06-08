@@ -70,6 +70,10 @@ footer>div>a, footer>div>a:visited {
   font-size: .6em;
 }
 
+div.highlighter-rouge {
+  overflow-x: scroll;
+}
+
 div.post {
   display: grid;
   grid-template-columns: 3fr 1fr;
@@ -104,17 +108,16 @@ img[src*='#center'] {
   max-width: 80%;
 }
 
+pre code {
+  white-space: pre;
+}
+
 @media (max-width: 899px) {
   img[src*='#center'] {
     height: auto;
     width: 100%;
     max-width: 100%;
   }
-}
-
-pre {
-  white-space: pre-wrap;
-  overflow-x: scroll;
 }
 
 @media only screen and (max-width: 599px) {
