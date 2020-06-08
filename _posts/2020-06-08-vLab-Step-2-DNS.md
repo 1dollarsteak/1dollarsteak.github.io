@@ -4,7 +4,7 @@ title: vLab 2 - DNS
 categories: [showcase]
 tags: [virtualisation, linux, vlab, dhcp, dns, kvm]
 description: Setting up a dns & dhcp server in CentOS 7
-date: 2020-06-04
+date: 2020-06-08
 lang: en
 ---
 To be honest I thought that this task was a rather simple one. I was wrong.
