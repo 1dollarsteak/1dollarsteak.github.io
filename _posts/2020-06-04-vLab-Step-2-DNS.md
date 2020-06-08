@@ -204,9 +204,83 @@ was successfully set up.
 
 ## Problems
 ### More RAM when installing
+As I've planned to assign this vm only 1 GB of RAM, the installation of the base
+system lasted significantly longer, than with 2 GB. When I'm (or Spacewalk)
+installing new servers, the minimum RAM for installation will always be 2 GB.
+Later when everything is running, the RAM can be lowered to the planned value.
+
+Time spent: 30 minutes.
 ### No Gateway configured
+This is just a common mistake I encounter relatively often. I categorize these
+as careless mistakes, as they can be easily avoided. Just after I was finishing
+the configuration of the dns server and after a reboot, I noticed, that it
+wasn't possible to resolve any public domains. It happened after I set up a
+manual network address, to turn of the QEMU-provided DHCP server. I forgot to
+add a default gateway. At the time I figured this out, I was already inspecting
+the traffic with tcpdump.
+
+Time spent: 1 hour.
 ### Spacewalk Distribution failed
+At the stage where I needed to create a distribution in Spacewalk for providing
+a PXE service, there first was no possibility where I could mount the iso with
+write access. After I learned that this is not in any way sensible, I've tried
+to figure out what is preventing Spacewalk to read the content of the mounted
+iso.
+
+I mounted the iso with configuring the following fstab entry:
+```bash
+/var/iso-images/CentOS-7-x86_64-Minimal-2003.iso /var/distro-trees/CentOS-7-x86_64 iso9660 ro,loop 0 0
+```
+While searching for more information on the error message, the website of the
+Spacewalk server gave me, I saw a thread where a user was experiencing the same
+issue. The solution there was to change the SELinux security context. I've tried
+different approaches but none of them worked:
+```bash
+# Adding spacewalk_data_t to the context to access the directory
+semanage fcontext -a -t spacewalk_data_t "/var/distro-trees(/.*)?"
+# Checking for the context
+ls -lZ /var/distro-trees/CentOS-7-x86_64/
+# Changing the context to the executing service
+sudo chcon -Rt tomcat_t /var/distro-trees/
+# Changing the context to a more general group (?)
+sudo chcon -t httpd_sys_content_t /var/distro-trees/
+```
+I was conscious of the possibility to just shut off SELinux, but I wanted to
+know how the issue can be resolved more elegantly. As I found out, there are
+existing fedora based helper utilities, that give fix suggestions based on
+listed access errors inside the audit.log. I went, installed and executed the
+sealert software package. After executing I was able to fix the 2 errors with
+the following commands (twice executed after a second error after the first
+run):
+```bash
+ausearch -c 'ajp-bio-0:0:0:0' --raw | audit2allow -M my-ajpbio0000
+semodule -i my-ajpbio0000.pp
+```
+
+For reference these are the two error messages I've had in audit.log:
+```
+type=AVC msg=audit(1591090111.335:172): avc:  denied  { search } for  pid=1010 comm="ajp-bio-0:0:0:0" name="/" dev="loop0" ino=1856 scontext=system_u:system_r:tomcat_t:s0 tcontext=system_u:object_r:iso9660_t:s0 tclass=dir permissive=0
+type=SYSCALL msg=audit(1591090111.335:172): arch=c000003e syscall=4 success=no exit=-13 a0=7f650800f3a0 a1=7f64f79f6d70 a2=7f64f79f6d70 a3=736567616d692f34 items=0 ppid=1 pid=1010 auid=4294967295 uid=53 gid=53 euid=53 suid=53 fsuid=53 egid=53 sgid=53 fsgid=53 tty=(none) ses=4294967295 comm="ajp-bio-0:0:0:0" exe="/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.252.b09-2.el7_8.x86_64/jre/bin/java" subj=system_u:system_r:tomcat_t:s0 key=(null)
+
+type=AVC msg=audit(1591090841.371:217): avc:  denied  { getattr } for  pid=1010 comm="ajp-bio-0:0:0:0" path="/var/distro-trees/CentOS-7-x86_64/images/pxeboot/initrd.img" dev="loop0" ino=4550 scontext=system_u:system_r:tomcat_t:s0 tcontext=system_u:object_r:iso9660_t:s0 tclass=file permissive=0
+type=SYSCALL msg=audit(1591090841.371:217): arch=c000003e syscall=4 success=no exit=-13 a0=7f6514064860 a1=7f64f77f4d70 a2=7f64f77f4d70 a3=736567616d692f34 items=0 ppid=1 pid=1010 auid=4294967295 uid=53 gid=53 euid=53 suid=53 fsuid=53 egid=53 sgid=53 fsgid=53 tty=(none) ses=4294967295 comm="ajp-bio-0:0:0:0" exe="/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.252.b09-2.el7_8.x86_64/jre/bin/java" subj=system_u:system_r:tomcat_t:s0 key=(null)
+```
+
+Time spent: 5 hours.
 ### Authorization not available boot error
+After I created a fstab entry for the iso file for the Spacewalk distribution, a
+boot of the server wasn't anymore possible and It dropped me to a rescue shell,
+with a note saying that the authorization was not available and a boot error
+occurred. It was probably a misspelling. After I readded the entry, everything
+worked.
+
+Time spent: 15 minutes.
 
 ## Lessons learned
-phew
+The SELinux error lasted longer than I could have imagined before, but that was
+also the time where I learned the most. Otherwise this part wasn't a challenge,
+but it was neat to have the possibility to setup bind and isc-dhcp once again.
+Another summary for completeness:
+- SELinux basic troubleshooting and function
+- BIND, ISC-DHCP configuration and installation refreshed
+- Spacewalk Kickstart basics
