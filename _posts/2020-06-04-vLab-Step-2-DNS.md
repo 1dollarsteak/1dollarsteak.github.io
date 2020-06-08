@@ -46,7 +46,7 @@ most important:
 - flexibility
 - accessibility
 
-What does this mean in specific. I need meta information for IP addresses,
+So what does this mean in specific. I need meta information for IP addresses,
 because it's a neat feature to have some information at hand when you are just
 pinging or searching servers. Though there is not much place for meta
 information inside an address. I dont want to bloat this up. I tought it'd be
@@ -59,7 +59,7 @@ To get started I defined 4 groups:
 
 As I stick with a fixed size of servers for my lab project, flexibility is not
 a big issue, but I still want to allow 20% of address space buffer for minor
-changes. The accessibitlity as the last entry on my list is a nice to have
+changes. The accessibitlity as the last entry on my list, is a nice to have
 feature of my address plan. The address should be easy to remember and in a few
 special cases it should also be easy to guess without much knowledge about the
 network. That means a fixed scheme and mostly contiguous or otherwise logically
@@ -86,17 +86,17 @@ priority group assigned:
 | labmon1  | 192.168.122.42 | 4 |
 | lablog1  | 192.168.122.43 | 4 |
 
-Changes to this list when proceding with the project are possible. Just typing
-this list made me rethink my grouping decisions. I decided against putting the
-system and configuration management servers inside group 4, because I see the
-administrator also as a "backend system" accessing servers. It's important to
-grant the system management server a high priority, because otherwise it would
-slowly fade into insignificance and won't be used anymore. As I see the system
-management as a first responder documentation (out of my experience). A loss in
-integrity of managed systems would be crucial to the stability of the whole
-network. The next question arrised after realising that the Spacewalk server
-also serves as a configuration server. This could mean that labcfg1 is no longer
-needed. I'll postpone that decision.
+Changes to this list when proceding with the project are possible. Just while
+typing this list made me rethink my grouping decisions. I decided against
+putting the system and configuration management servers inside group 4, because
+I see the administrator also as a "back-end system" accessing servers. It's
+important to grant the system management server a high priority, because
+otherwise it would slowly fade into insignificance and won't be used anymore.
+As I see the system management as a first responder documentation (out of my
+experience). A loss in integrity of managed systems would be crucial to the
+stability of the whole network. The next question arrised after realising that
+the Spacewalk server also serves as a configuration server. This could mean
+that labcfg1 is no longer needed. I'll postpone that decision.
 
 The DNS plan for the hosts is integrated in the upper table. As my zone I've
 chosen to create a subdomain of my actual domain: lab.fabianbissmann.de. Despite
@@ -116,8 +116,8 @@ Despite that I already have installed DNS and DHCP servers in the past I
 conducted several manuals in hope of learning something new and to decrease the
 possibility to create issues I'll stumble upon in the later process.
 These are the links to the manuals:
-- [DNS Server](www.google.de)
-- [DHCP Server](www.google.de)
+- [DNS Server](https://www.itzgeek.com/how-tos/linux/centos-how-tos/configure-dns-bind-server-on-centos-7-rhel-7.html)
+- [DHCP Server](https://www.itzgeek.com/how-tos/linux/ubuntu-how-tos/install-and-configure-dhcp-server-on-centos-7-ubuntu-14-04.html)
 
 The software was installed by using yum. This is the named configuration:
 ```bash
@@ -186,13 +186,15 @@ Also, nothing special here. The next-server is the PXE server (it's the
 Spacewalk server). It's advised to disable the QEMU-internal dhcp server (if
 started before). For this to achieve, I had to edit the network configuration
 of the virtual network via the virsh application and delete the dhcp part.
+Luckily I got this information pretty fast from
+[here](https://unix.stackexchange.com/questions/35291/qemu-kvm-and-internal-dhcp-server).
 
-Now time to enable the Spacewalk server as a target for PXE.
-errors and errors later...
 The last step was to enable the Spacewalk server as a target for the PXE
-feature. For it to set up, I had to download a CentOS ISO and mount it inside
-the labsmt1 server. After that, I should be able to configure a distribution,
-with the mounted ISO as a path to the boot image inside. It turned out that:
+feature. I went along the official CentOS
+[manual](https://wiki.centos.org/HowTos/PackageManagement/Spacewalk#Populating_the_distribution_tree) for setting it up For it to set up, I had to download a CentOS ISO
+and mount it inside the labsmt1 server. After that, I should be able to
+configure a distribution with the mounted ISO as a path to the boot image
+inside. It turned out that:
 1. ISO files (loop devices) get mounted read only
 2. SELinux doesn't allow Spacewalk to read or access it.
 
@@ -200,17 +202,19 @@ More on that in the problems section. After I overcame these *features*,
 Spacewalk was able to access the files in the mounted iso and the distribution
 was successfully set up.
 
-**Image of the created distribution**
+![Spacewalk distribution settings](/assets/img/posts/vl2/spacewalk_distribution_settings.png#center)
+
+![Spacewalk distribution list](/assets/img/posts/vl2/spacewalk_distributions.png#center)
 
 ## Problems
-### More RAM when installing
+### More RAM needed when installing
 As I've planned to assign this vm only 1 GB of RAM, the installation of the base
-system lasted significantly longer, than with 2 GB. When I'm (or Spacewalk)
-installing new servers, the minimum RAM for installation will always be 2 GB.
-Later when everything is running, the RAM can be lowered to the planned value.
+system lasted significantly longer, than with 2 GB. When I'm installing new
+servers, the minimum RAM for installation will always be 2 GB. Later when
+everything is running, the RAM can be lowered to the planned value.
 
 Time spent: 30 minutes.
-### No Gateway configured
+### No gateway was configured
 This is just a common mistake I encounter relatively often. I categorize these
 as careless mistakes, as they can be easily avoided. Just after I was finishing
 the configuration of the dns server and after a reboot, I noticed, that it
@@ -220,7 +224,7 @@ add a default gateway. At the time I figured this out, I was already inspecting
 the traffic with tcpdump.
 
 Time spent: 1 hour.
-### Spacewalk Distribution failed
+### Spacewalk distribution setup failed
 At the stage where I needed to create a distribution in Spacewalk for providing
 a PXE service, there first was no possibility where I could mount the iso with
 write access. After I learned that this is not in any way sensible, I've tried
@@ -266,8 +270,18 @@ type=AVC msg=audit(1591090841.371:217): avc:  denied  { getattr } for  pid=1010 
 type=SYSCALL msg=audit(1591090841.371:217): arch=c000003e syscall=4 success=no exit=-13 a0=7f6514064860 a1=7f64f77f4d70 a2=7f64f77f4d70 a3=736567616d692f34 items=0 ppid=1 pid=1010 auid=4294967295 uid=53 gid=53 euid=53 suid=53 fsuid=53 egid=53 sgid=53 fsgid=53 tty=(none) ses=4294967295 comm="ajp-bio-0:0:0:0" exe="/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.252.b09-2.el7_8.x86_64/jre/bin/java" subj=system_u:system_r:tomcat_t:s0 key=(null)
 ```
 
+I also needed help solving this from these links:
+- <https://www.redhat.com/archives/spacewalk-list/2018-April/msg00020.html>
+- <https://danwalsh.livejournal.com/67007.html>
+- <https://www.reddit.com/r/linuxadmin/comments/5cl5bs/configuring_cobbler_in_spacewalk_for_pxe_boot/>
+- <https://spacewalk-list.redhat.narkive.com/Ifz8VwiT/issues-with-kickstart>
+- <https://www.linuxquestions.org/questions/linux-security-4/selinux-how-to-list-all-type-enforcement-contexts-that-exist-on-the-system-843654/>
+- <https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html-single/selinux_users_and_administrators_guide/index>
+
+I hope that my next 2 vms will successfully boot.
+
 Time spent: 5 hours.
-### Authorization not available boot error
+### Authorization not available (boot error)
 After I created a fstab entry for the iso file for the Spacewalk distribution, a
 boot of the server wasn't anymore possible and It dropped me to a rescue shell,
 with a note saying that the authorization was not available and a boot error
