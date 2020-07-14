@@ -19,8 +19,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: 3fr 1fr;
-  grid-column-gap: 10%;
-  grid-template-areas:
+  grid-column-gap: 10%; grid-template-areas:
     "links links links"
     "author author author";
 }
@@ -110,6 +109,10 @@ img[src*='#center'] {
 
 pre code {
   white-space: pre;
+}
+
+table {
+  word-wrap: anywhere;
 }
 
 @media (max-width: 899px) {
