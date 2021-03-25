@@ -43,12 +43,22 @@ div.content, footer.content {
   background-color: #fff;
 }
 
-span.emphasize {
-  font-style: italic;
+div.highlight {
+  display: inline-block;
 }
 
-table.rouge-table, td.rouge-code {
-  width: 100%;
+pre.highlight {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+td.rouge-gutter {
+  border-right: 1px solid #ccc;
+  padding-right: 0.5em;
+}
+
+span.emphasize {
+  font-style: italic;
 }
 
 ul.no-left-padding {
@@ -117,6 +127,12 @@ pre code {
 
 table {
   word-wrap: anywhere;
+}
+
+@media (min-width: 768px) {
+  div.highlight {
+    width: 100%;
+  }
 }
 
 @media (max-width: 899px) {
