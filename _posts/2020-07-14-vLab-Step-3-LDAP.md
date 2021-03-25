@@ -32,7 +32,7 @@ scaling I chose is sufficient.
 
 I neither set up (or kickstarted) a server automatically, nor did I install an
 OpenLDAP server. So for the planning part, best I could do was vague guessing of
-the needed steps.
+the needed steps:
 - Create new kickstart profile
 - Startup two vms and finish the configuration
 - Install and configure OpenLDAP
