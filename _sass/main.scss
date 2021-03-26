@@ -43,19 +43,19 @@ div.content, footer.content {
   background-color: #fff;
 }
 
-div.highlight {
+/*div.highlight {
   display: inline-block;
 }
 
 pre.highlight {
   margin-top: 0;
   margin-bottom: 0;
-}
+}*/
 
-td.rouge-gutter {
+/*td.rouge-gutter {
   border-right: 1px solid #ccc;
   padding-right: 0.5em;
-}
+}*/
 
 span.emphasize {
   font-style: italic;
@@ -130,11 +130,13 @@ table {
   word-wrap: anywhere;
 }
 
+/*
 @media (min-width: 768px) {
   div.highlight {
     width: 100%;
   }
 }
+*/
 
 @media (max-width: 899px) {
   img[src*='#center'] {
