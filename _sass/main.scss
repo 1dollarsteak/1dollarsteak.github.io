@@ -52,6 +52,18 @@ pre.highlight {
   margin-bottom: 0;
 }
 
+td.rouge-code>pre>span {
+  display: inline-block;
+}
+
+.rouge-table td {
+  vertical-align: top;
+}
+
+.rouge-table td pre {
+  white-space: pre-wrap;
+}
+
 span.emphasize {
   font-style: italic;
 }
@@ -109,6 +121,10 @@ body {
 
 hr {
   color: #fff;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
 }
 
 img[src*='#center'] { 
