@@ -29,7 +29,7 @@ the source file is (license included) 249 SLOC long. Also it's making
 use of helper functions out of ten header files.
 ## Header files
 This is the list of the header files I mentioned above:
-```c
+{% highlight c %}
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -41,7 +41,7 @@ This is the list of the header files I mentioned above:
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-```
+{% endhighlight %}
 ### types.h
 The file types.h defines extra types for variables. The only usage of
 types out of this header file is `size_t` and `ssize_t`. According to
@@ -50,10 +50,10 @@ the NetBSD-8.1 man page for
 used for size declaration of objects and `ssize_t` is used for counting
 of bytes. Usually these two are defined like this (depending on your
 architecture):
-```c
+{% highlight c %}
 typedef unsigned long __size_t;
 typedef long __ssize_t;
-```
+{% endhighlight %}
 ### stat.h
 With the functions, variables and structs defined in stat.h you are able
 to retrieve information from various files. In cat.c `int fstat(int,
@@ -76,7 +76,7 @@ there is a special keyword before int. Defined in
 [cdefs.h](https://github.com/openbsd/src/blob/master/sys/sys/cdefs.h) it
 manages inlining of functions. The comment in the source file describes it
 best:
-```c
+{% highlight c %}
 /*
  * __only_inline makes the compiler only use this function definition
  * for inlining; references that can't be inlined will be left as
@@ -84,17 +84,17 @@ best:
  * matching library should include a simple extern definition for
  * the function to handle those references. c.f. ctype.h
  */
-```
+{% endhighlight %}
 In general, inlining of extern or static functions has something to do with
 optimization. The definition of all three mentioned functions are very simple
 oneliners. In my opinion the less interesting one is
 `__only_inline int toascii(int _c)`.
-```c
+{% highlight c %}
 __only_inline int toascii(int _c)
 {
   return (_c & 0177);
 }
-```
+{% endhighlight %}
 As you pass any char value to this function it converts it to an integer value
 (because of `int _c`). Afterwards it applies the variable with a bitwise AND
 operation to the octal value 0177 (that's the last value of the ascii table).
@@ -107,7 +107,7 @@ The isascii() function tests for an ASCII character, wich is any character with
 a value less than or equal to 0177."_.
 The function definition of iscntrl makes an interesting use of a pointer
 assignment to a char array with the field size of the integer value of it.
-```c
+{% highlight c %}
 //...
 #define _C 0x20
 extern const char *_ctype_;
@@ -116,7 +116,7 @@ __only_inline int iscntrl(int _c)
 {
   return (_c == -1 ? 0 : ((_ctype_ + 1)[(unsigned char)_c] & _C));
 }
-```
+{% endhighlight %}
 The most interesting part is `(_ctype_ + 1)[(unsigned char)_c]`. As I've
 already dug deeper into this header file than I initially wanted, I'll not go
 into it any further and let this function abide marked as interesting. (Also
@@ -131,12 +131,12 @@ return value.
 ### errno.h
 The global variable mentioned above is defined in this header. The declaration
 is simple:
-```c
+{% highlight c %}
 #ifndef errno
 int *__errno(void);
 #define errno (*__errno())
 #endif /* errno */
-```
+{% endhighlight %}
 So, `errno` returns an integer value. A list of different possible values for
 this error value can be extracted from
 [this](https://github.com/openbsd/src/blob/master/sys/sys/errno.h) source file.
@@ -152,14 +152,14 @@ This header file defines several functions to work with files in different
 modes (read only, write, ...). The `int open(const char *, int, ...);` function
 is used in cat.c to check if a file, that was passed as an argument, can be
 opened for reading (and open it afterwards).
-```c
+{% highlight c %}
 else if ((fd = open(*argv, 0_RDONLY, 0)) == -1) {
   warn("%s", *argv);
   rval = 1;
   ++argv;
   continue;
 }
-```
+{% endhighlight %}
 This happens in the cat.c function `void raw_args(char **argv)`. If opening the
 file fails, it prints out a warning, jumps to the next argument (file) and
 continues the loop the if clause resides in, The file descriptor is in the next
@@ -187,13 +187,13 @@ variables out of this file is very high. To access the standard I/O of the
 operating system, cat.c makes use of the common streams `stdout, stdin, stderr`.
 These streams get opened at program startup. In the header file they are defined
 like this:
-```c
+{% highlight c %}
 extern FILE __sF[];
 
 #define stdin (&__sF[0])
 #define stdout (&__sF[1])
 #define stdout (&__sF[2])
-```
+{% endhighlight %}
 `FILE` is a struct with different flags, options and methods for reading and
 writing to files. `FILE` is frequently used throughout stdio.h as a return value
 or as a type for arguments to a function.
@@ -241,7 +241,7 @@ functions"_ - [Wikipedia](https://en.wikipedia.org/wiki/C_standard_library)
 The function that's used inside cat.c is for memory allocation. With
 `void *malloc(size_t);` space for a buffer is allocated inside this
 piece of code:
-```c
+{% highlight c %}
 if (buf == NULL) {
   if (fstat(wfd, &sbuf) == -1)
     err(1, "stdout");
@@ -249,7 +249,7 @@ if (buf == NULL) {
   if ((buf = malloc(bsize)) == NULL)
     err(1, "malloc");
 }
-```
+{% endhighlight %}
 There is a lot of error detection going on here and the only really
 interesting line is malloc itself inside the third if clause. Speaking
 about memory allocation, OpenBSD comes with functions that extend the
@@ -310,7 +310,7 @@ comment about choices regarding the design of the flow chart. You may notice
 that there are two identical decision objects in this chart. It's where 
 *argv != 0 is checked. I've added one at the start and one at the end because 
 the source code just acts the same way. A small excerpt to visualize:
-```c
+{% highlight c %}
 //...
 do {
   if (*argv) {
@@ -327,8 +327,8 @@ do {
   //...
 } while (*argv);
 //...
-```
-Have a look at line three and 15. There you can see that the check is performed
+{% endhighlight %}
+Have a look at the `if (*arg)` and `while (*arv)`. There you can see that the check is performed
 twice. This is what I have tried to depict in my flow chart. You can see here,
 that if cat is run with no "file" arguments passed (that means no arguments
 after the options) it passes stdin as the fp to cook_buf. If it contains any
@@ -366,16 +366,16 @@ a single if clause and is accompanied by two error checks. After that the
 function enters a rather simple read-file-print-file loop construct. To focus a
 bit on how simple the loops are constructed, I have added the relevant snippet
 below:
-```c
+{% highlight c %}
 while ((nr = read(rfd, buf, bsize)) != -1 && nr != 0)
   for (off = 0; nr; nr -= nw, off += nw)
     if ((nw = write(wfd, buf + off, (size_t)nr)) == 0 || nw == -1)
       err(1, "stdout");
-```
+{% endhighlight %}
 As every action takes place inside the loops, no space is wasted. Just to take
 a better shot at explaining it, I've allowed myself to expand this piece of code
 a bit:
-```c
+{% highlight c %}
 nr = read(rfd, buf, bsize);
 while (nr != -1 && nr != 0) {
   for (off = 0; nr; nr -= nw, off += nw) {
@@ -386,7 +386,7 @@ while (nr != -1 && nr != 0) {
   }
   nr = read(rfd, buf, bsize);
 }
-```
+{% endhighlight %}
 First nr is set with bsize bytes out of the file that rfd links to. If
 everything went well, the while loop is entered. The for loop is now responsible
 to write from the buffer to the stdout stream. The variable off is used to

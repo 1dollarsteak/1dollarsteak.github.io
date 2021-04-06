@@ -55,7 +55,7 @@ These are the links to the manuals:
 - [DHCP Server](https://www.itzgeek.com/how-tos/linux/ubuntu-how-tos/install-and-configure-dhcp-server-on-centos-7-ubuntu-14-04.html)
 
 The software was installed by using yum. This is the named configuration:
-```bash
+{% highlight bash %}
 #/etc/named.conf
 zone "." IN {
         type hint;
@@ -73,12 +73,12 @@ zone "122.168.192.in-addr.arpa" IN {
         file "/var/named/192.168.122.db";
         allow-update { none; };
 };
+{% endhighlight %}
 
-```
 After setting up the zones I had to create the zone files, with all entrys of
 the above table (that I planned). There is nothing of much interest. Just to
 give you an idea of it:
-```bash
+{% highlight text %}
 /var/named/lab.fabianbissmann.de.db
 @ IN SOA labdns1.lab.fabianbissmann.de. hostmaster.lab.fabianbissmann.de. (
         2020053001 ; serial
@@ -93,14 +93,14 @@ give you an idea of it:
 ; IP address of name server
 labdns1 IN A 192.168.122.10
 ...
-```
+{% endhighlight %}
 One thing worth to mention, is that I numbered the serial according to the date
 of creation (plus 2 digits for changes). Every change this number needs to get
 bigger. To make it easier to guess, when the last change to the dns was, I've
 chosen to make the serial look like a timestamp.
 
 The configuration for the DHCP server looks like this:
-```bash
+{% highlight bash %}
 #/etc/dhcp/dhcpd.conf
 option domain-name "lab.fabianbissmann.de";
 option domain-name-servers labdns1.lab.fabianbissmann.de;
@@ -116,7 +116,7 @@ subnet 192.168.122.0 netmask 255.255.255.0 {
         next-server 192.168.122.20;
         filename "/pxelinux.0";
 }
-```
+{% endhighlight %}
 Also, nothing special here. The next-server is the PXE server (it's the
 Spacewalk server). It's advised to disable the QEMU-internal dhcp server (if
 started before). For this to achieve, I had to edit the network configuration
@@ -167,14 +167,14 @@ to figure out what is preventing Spacewalk to read the content of the mounted
 iso.
 
 I mounted the iso with configuring the following fstab entry:
-```bash
+{% highlight text %}
 /var/iso-images/CentOS-7-x86_64-Minimal-2003.iso /var/distro-trees/CentOS-7-x86_64 iso9660 ro,loop 0 0
-```
+{% endhighlight %}
 While searching for more information on the error message, the website of the
 Spacewalk server gave me, I saw a thread where a user was experiencing the same
 issue. The solution there was to change the SELinux security context. I've tried
 different approaches but none of them worked:
-```bash
+{% highlight bash %}
 # Adding spacewalk_data_t to the context to access the directory
 semanage fcontext -a -t spacewalk_data_t "/var/distro-trees(/.*)?"
 # Checking for the context
@@ -183,7 +183,7 @@ ls -lZ /var/distro-trees/CentOS-7-x86_64/
 sudo chcon -Rt tomcat_t /var/distro-trees/
 # Changing the context to a more general group (?)
 sudo chcon -t httpd_sys_content_t /var/distro-trees/
-```
+{% endhighlight %}
 I was conscious of the possibility to just shut off SELinux, but I wanted to
 know how the issue can be resolved more elegantly. As I found out, there are
 existing fedora based helper utilities, that give fix suggestions based on
@@ -191,19 +191,19 @@ listed access errors inside the audit.log. I went, installed and executed the
 sealert software package. After executing I was able to fix the 2 errors with
 the following commands (twice executed after a second error after the first
 run):
-```bash
+{% highlight bash %}
 ausearch -c 'ajp-bio-0:0:0:0' --raw | audit2allow -M my-ajpbio0000
 semodule -i my-ajpbio0000.pp
-```
+{% endhighlight %}
 
 For reference these are the two error messages I've had in audit.log:
-```
+{% highlight text %}
 type=AVC msg=audit(1591090111.335:172): avc:  denied  { search } for  pid=1010 comm="ajp-bio-0:0:0:0" name="/" dev="loop0" ino=1856 scontext=system_u:system_r:tomcat_t:s0 tcontext=system_u:object_r:iso9660_t:s0 tclass=dir permissive=0
 type=SYSCALL msg=audit(1591090111.335:172): arch=c000003e syscall=4 success=no exit=-13 a0=7f650800f3a0 a1=7f64f79f6d70 a2=7f64f79f6d70 a3=736567616d692f34 items=0 ppid=1 pid=1010 auid=4294967295 uid=53 gid=53 euid=53 suid=53 fsuid=53 egid=53 sgid=53 fsgid=53 tty=(none) ses=4294967295 comm="ajp-bio-0:0:0:0" exe="/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.252.b09-2.el7_8.x86_64/jre/bin/java" subj=system_u:system_r:tomcat_t:s0 key=(null)
 
 type=AVC msg=audit(1591090841.371:217): avc:  denied  { getattr } for  pid=1010 comm="ajp-bio-0:0:0:0" path="/var/distro-trees/CentOS-7-x86_64/images/pxeboot/initrd.img" dev="loop0" ino=4550 scontext=system_u:system_r:tomcat_t:s0 tcontext=system_u:object_r:iso9660_t:s0 tclass=file permissive=0
 type=SYSCALL msg=audit(1591090841.371:217): arch=c000003e syscall=4 success=no exit=-13 a0=7f6514064860 a1=7f64f77f4d70 a2=7f64f77f4d70 a3=736567616d692f34 items=0 ppid=1 pid=1010 auid=4294967295 uid=53 gid=53 euid=53 suid=53 fsuid=53 egid=53 sgid=53 fsgid=53 tty=(none) ses=4294967295 comm="ajp-bio-0:0:0:0" exe="/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.252.b09-2.el7_8.x86_64/jre/bin/java" subj=system_u:system_r:tomcat_t:s0 key=(null)
-```
+{% endhighlight %}
 
 I also needed help solving this from these links:
 - <https://www.redhat.com/archives/spacewalk-list/2018-April/msg00020.html>
