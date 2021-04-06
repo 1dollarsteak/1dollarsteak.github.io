@@ -22,8 +22,8 @@ kramdown:
   syntax_highlighter: rouge
 
   syntax_highlighter_opts:
+    formatter: Rouge::Formatters::HTML.new
     css_class: 'highlight'
-    #formatter: '::Rouge::Formatters::HTMLInline.new(highlight)'
 
 sass:
   style: compact
