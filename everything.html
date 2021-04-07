@@ -1,0 +1,31 @@
+---
+title: Everything
+lang: en
+---
+<h1 id="tags">Tags</h1>
+{% for tag in site.tags %}
+  <a href="#{{ tag[0] }}">{{ tag[0] }}</a>
+{% endfor %}
+<h1 id="categories">Categories</h1>
+{% for category in site.categories %}
+  <a href="#{{ category[0] }}">{{ category[0] }}</a>
+{% endfor %}
+<hr>
+<h1>Posts (tags)</h1>
+{% for tag in site.tags %}
+  <h2 id="{{ tag[0] }}">{{ tag[0] }}<a class="toparrow no-link-decoration" href="#tags">&#8593;</a></h2>
+  <ul>
+    {% for post in tag[1] %}
+      <li><a href="{{ post.url }}">{{ post.title }}</a></li>
+    {% endfor %}
+  </ul>
+{% endfor %}
+<h1>Posts (categories)</h1>
+{% for category in site.categories %}
+  <h2 id="{{ category[0] }}">{{ category[0] }}<a class="toparrow no-link-decoration" href="#categories">&#8593;</a></h2>
+  <ul>
+    {% for post in category[1] %}
+      <li><a href="{{ post.url }}">{{ post.title }}</a></li>
+    {% endfor %}
+  </ul>
+{% endfor %}
