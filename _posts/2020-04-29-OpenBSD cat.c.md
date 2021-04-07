@@ -46,7 +46,7 @@ This is the list of the header files I mentioned above:
 The file types.h defines extra types for variables. The only usage of
 types out of this header file is `size_t` and `ssize_t`. According to
 the NetBSD-8.1 man page for
-[types](https://man.openbsd.org/NetBSD-8.1/types), `size_t` is typically
+[types](https://man.netbsd.org/types.3), `size_t` is typically
 used for size declaration of objects and `ssize_t` is used for counting
 of bytes. Usually these two are defined like this (depending on your
 architecture):
