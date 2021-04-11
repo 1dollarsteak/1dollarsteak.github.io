@@ -17,9 +17,9 @@ for this company doesn't exist anymore. But let's focus more on the program.
 ## Overview
 My work will base on Theo de Raadt's version (1.26) from 2019. Source can be
 found
-[here](https://github.com/bluerise/openbsd-src/blob/master/bin/chio/chio.c).
-This program is used to control medium changers (such as tape drives). Different
-operations (for example moving or exchanging) can be performed.
+[here](https://github.com/openbsd/src/blob/master/bin/chio/chio.c). This program
+is used to control medium changers (such as tape drives). Different operations
+(for example moving or exchanging) can be performed.
 ## Header files
 Here is the list of all headers in use:
 {% highlight c %}
@@ -79,7 +79,83 @@ struct changer_move {
 };
 {% endhighlight %}
 ### mtio.h
+[mtio.h](https://man.openbsd.org/mtio) is a header file, that defines structures
+and operations for _typical tape block devices_. There is one location in the
+code, where this interface is used. It's in the function check_source_drive as
+a measure of troubleshooting, if the drive in the tape device is full but not
+accessible.
+{% highlight c %}
+static void
+check_source_drive(int unit)
+{
+	struct mtop mtoffl =  { MTOFFL, 1 };
+  // ...
+  if (ioctl(mtfd, MTIOCTOP, &mtoffl) == -1)
+		err(1, "%s drive %d (%s): rewoffl", changer_name, unit, tapedev);
+	close(mtfd);
+}
+{% endhighlight %}
+The appropriate definition can be looked up in the source code of the
+corresponding
+[header file](https://github.com/openbsd/src/blob/master/sys/sys/mtio.h):
+{% highlight c %}
+/* structure for MTIOCTOP - mag tape op command */
+struct mtop {
+	short	mt_op;		/* operations defined below */
+	int	mt_count;	/* how many of them */
+};
+
+// ...
+#define MTOFFL		6	/* rewind and put the drive offline */
+// ...
+
+/* mag tape io control commands */
+#define	MTIOCTOP	_IOW('m', 1, struct mtop)	/* do a mag tape op */
+{% endhighlight %}
+The resolved function call would be: `_IOW('m', 1, {MTOFFL, 1});`. Note that
+this is syntactically incorrect C. I've decided to pass the struct anonymously
+to make the call more readable.
 ### chio.h
+Based on the name of the next header file, it should be clear, that it can be
+counted towards the more important files in this program. Everything is in use.
+The file is separable in 4 sections:
+- Element types and flags
+- Data structures
+- Return values
+- IOCTL macros for controller / device communication
+#### Element types and flags
+This defines the ids for the elements of a tape device:
+{% highlight c %}
+/*
+ * Element types.  Used as "to" and "from" type indicators in move
+ * and exchange operations.
+ * ...
+*/
+#define CHET_MT		0	/* medium transport (picker) */
+#define CHET_ST		1	/* storage transport (slot) */
+#define CHET_IE		2	/* import/export (portal) */
+#define CHET_DT		3	/* data transfer (drive) */
+{% endhighlight %}
+
+Usage in elements[] in chio.c:
+{% highlight c %}
+const struct element_type elements[] = {
+	{ "drive",		CHET_DT },
+	{ "picker",		CHET_MT },
+	{ "portal",		CHET_IE },
+	{ "slot",		CHET_ST },
+	{ NULL,			0 },
+};
+{% endhighlight %}
+
+Declaration of element_type in local header file defs.h:
+{% highlight c %}
+struct element_type {
+char  *et_name; /* name; i.e. "picker, "slot", etc. */
+  int et_type;  /* type number */
+};
+{% endhighlight %}
+
 ### err.h
 ### errno.h
 ### fcntl.h
