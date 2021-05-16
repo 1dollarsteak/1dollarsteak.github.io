@@ -157,13 +157,44 @@ char  *et_name; /* name; i.e. "picker, "slot", etc. */
 {% endhighlight %}
 
 ### err.h
+There are 11 occurences of the warnx function, 17 of err and finally 11
+times the errx function was called. The difference between err and the
+errx/warnx variations are, that when err is called, also the error
+message is looked up in [errno.2](https://man.openbsd.org/errno.2) and
+appended to the fmt string (if not NULL).
 ### errno.h
+These are the error message definitions that are looked up when err is
+called.
 ### fcntl.h
+Because chio works with files, this header is also clearly needed. The
+creation of the changer file descriptor is achieved through open:
+{% highlight c %}
+if ((changer_fd = open(changer_name, O_RDWR, 0600)) == -1)
+    err(1, "%s: open", changer_name);
+{% endhighlight %}
 ### limits.h
+This header file defines the size range that the different data types
+can store. Nevertheless it is not used in this file. The only occurences
+I came across are two checking for the range of a long in parse.y.
+Though, there it's also added to the list of header files.
 ### stdio.h
+This is used to get access to the streams `stderr` and `stdout` for
+various usage in the functions warn, err and (f)printf. User input is
+not expected / handled, because this program is solely based on a
+configuration file.
 ### stdlib.h
+The most interesting usage of functions in stdlib is calloc and free.
+Next to these the following are used: exit, getenv, strtol. I'll not go
+into deeper details with the latter. Memory allocation is used to store
+the status info that gets queried from the changer device with
+`ioctl(changer_fd, CHIOGSTATUS, &cmd)`. Here `&cmd` is the address of a
+specific struct where volume labels (primary and alternative) can be
+stored. They are later printed out with their corresponding serial
+strings.
 ### string.h
+No functions or other resources of this header file are actually in use.
 ### unistd.h
+Also (check)
 ### util.h
 ### defs.h (local)
 ### pathnames.h (local)
