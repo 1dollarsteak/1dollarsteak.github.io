@@ -1,3 +1,8 @@
+:root {
+  --textbackground: #444;
+  --textforeground: #fff;
+}
+
 #headline {
   display: grid;
   grid-template-columns: 1fr;
@@ -14,14 +19,13 @@
 #footer {
   background-color: #222;
   color: #999;
-  text-align: center;
-
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: 3fr 1fr;
   grid-column-gap: 10%; grid-template-areas:
     "links links links"
     "author author author";
+  text-align: center;
 }
 
 span#copyright {
@@ -35,12 +39,12 @@ span#copyright-sign {
 }
 
 div.content, footer.content {
-  margin: 0 auto;
-  padding: .6em;
-  max-width: 60em;
+  background-color: var(--textforeground);;
+  color: var(--textbackground);;
   font-family: sans-serif;
-  color: #444;
-  background-color: #fff;
+  margin: 0 auto;
+  max-width: 60em;
+  padding: .6em;
 }
 
 div.highlight {
@@ -77,12 +81,12 @@ li.no-list-style {
 }
 
 a.no-link-decoration {
+  color: var(--textbackground);;
   text-decoration: none;
-  color: #444;
 }
 
 a.no-link-decoration:visited {
-  color: #444;
+  color: var(--textbackground);;
 }
 
 a.toparrow {
@@ -105,8 +109,8 @@ div.post {
 }
 
 div.post-date {
-  justify-self: end;
   align-self: center;
+  justify-self: end;
 }
 
 a, a:visited {
@@ -117,14 +121,23 @@ a, a:visited {
 
 body {
   background-color: #333;
-  margin-top: 0;
-  margin-bottom: 0;
   background-image: url("data:image/svg+xml,%3Csvg width='6' height='6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='%23555' d='M5 0h1L0 6V5zM6 5v1H5z'/%3E%3C/svg%3E");
   font-size: 1em;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+code {
+  color: #444;
+}
+
+figure {
+  margin: 0;
+  overflow-x: scroll;
 }
 
 hr {
-  color: #fff;
+  color: var(--textforeground);;
 }
 
 html {
@@ -145,29 +158,36 @@ table {
   word-wrap: anywhere;
 }
 
-
 @media (min-width: 768px) {
   div.highlight {
     width: 100%;
   }
 }
 
-
 @media (max-width: 899px) {
   img[src*='#center'] {
     height: auto;
-    width: 100%;
     max-width: 100%;
+    width: 100%;
   }
 }
 
 @media only screen and (max-width: 599px) {
 	body {
-    background-color: #fff;
+    background-color: var(--textforeground);;
   }
 }
 
-figure {
-  margin: 0;
-  overflow-x: scroll;
+@media (prefers-color-scheme: dark) {
+  :root {
+    --textbackground: #fff;
+    --textforeground: #444;
+  }
+  img {
+    opacity: .75;
+    transition: opacity .5s ease-in-out;
+  }
+  img:hover {
+    opacity: 1;
+  }
 }
