@@ -15,11 +15,12 @@ Thorpe for And Communications in 1996 (unverified). Sadly, the actual home page
 for this company doesn't exist anymore. But let's focus more on the program.
 
 ## Overview
-My work will base on Theo de Raadt's version (1.26) from 2019. Source can be
+My work will base on Theo de Raadt's version (1.26) from 2019. The Source can be
 found
 [here](https://github.com/openbsd/src/blob/master/bin/chio/chio.c). This program
-is used to control medium changers (such as tape drives). Different operations
-(for example moving or exchanging) can be performed.
+is used to control medium changers (such as tape drives). And was initially
+written by Jason R. Thorpe. Different operations (for example moving or
+exchanging) can be performed.
 ## Header files
 Here is the list of all headers in use:
 {% highlight c %}
@@ -137,7 +138,7 @@ This defines the ids for the elements of a tape device:
 #define CHET_DT		3	/* data transfer (drive) */
 {% endhighlight %}
 
-Usage in elements[] in chio.c:
+Usage of elements[] in chio.c:
 {% highlight c %}
 const struct element_type elements[] = {
 	{ "drive",		CHET_DT },
@@ -156,7 +157,25 @@ char  *et_name; /* name; i.e. "picker, "slot", etc. */
 };
 {% endhighlight %}
 
-The preceeding code shows, that I need more sleep.
+The preceeding code shows the way in which different options get managed inside
+chio.c. Through the struct element_type the connection between the id as a
+number and a more distinguishable name for the element type is made.  
+Finally inside chio.c the struct is parsed by this function:
+{% highlight c %}
+static int
+parse_element_type(char *cp)
+{
+	int i;
+
+	for (i = 0; elements[i].et_name != NULL; ++i)
+		if (strcmp(elements[i].et_name, cp) == 0)
+			return (elements[i].et_type);
+
+	errx(1, "invalid element type `%s'", cp);
+}
+{% endhighlight %}
+There the struct is traversed until the matching name can be found. Afterwards
+the internal id is returned.
 
 ### err.h
 There are 11 occurences of the warnx function, 17 of err and finally 11
