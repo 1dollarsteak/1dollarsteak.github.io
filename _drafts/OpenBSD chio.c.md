@@ -175,7 +175,45 @@ parse_element_type(char *cp)
 }
 {% endhighlight %}
 There the struct is traversed until the matching name can be found. Afterwards
-the internal id is returned.
+the internal id is returned.  
+Flags are separated by the following two use cases: a changer position command
+(cp) or a changer move command (cm) is issued. The following flags are defined:
+{% beginhighlight c %}
+#define CE_INVERT1	0x01	/* invert media 1 */
+#define CE_INVERT2	0x02	/* invert media 2 */
+
+#define CP_INVERT	0x01	/* invert picker */
+{% endhighlight %}
+These flags solely stand for the optional command modifier to invert the media
+unit before any operation is done. In the main program the parameter is fetched
+within a switch statement and added to a general structure that stores, besides
+other things, the flags to apply. To execute the structure is passed to an ioctl
+call (see below at IOCTL macros ...).
+#### Data structures
+In chio.h (like in many) the main task of structures is to store data. Few are
+utilized to store data from a function call. Most of them are used for
+instructing the media changer. The following structs are in place:
+{% beginhighlight c %}
+struct changer_move // OUT
+struct changer_exchange // OUT
+struct changer_position // OUT
+struct changer_params // IN
+struct changer_voltag // HELPER
+struct changer_element_status // IN
+struct changer_element_status_request // OUT
+{% endhighlight %}
+I've commented the different types of usage. _OUT_ is for data that is saved to
+provide a function with. _IN_ is used when a struct receives data from a call.
+Finally _HELPER_ is just there to be used in other structs. Most of the structs
+are self explanatory from their names. The structure changer_element_status
+holds the information gathered by a changer_element_status_request. This request
+is executed (and filled) with an ioctl call to the device. Because the size of
+the data to store depends on the count of the changer hardware elements and the
+type of the element (picker, slot, portal, drive), a second struct of type
+changer_element_status resides in the status_request structure. In chio the
+information gets traversed inside a for loop where the data structure is
+accessed and mapped / accessed with a pointer of the type
+changer_element_status.
 
 ### err.h
 There are 11 occurences of the warnx function, 17 of err and finally 11
